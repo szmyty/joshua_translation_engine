@@ -1,7 +1,8 @@
 import argparse
 import sys
 from flask import Flask
-from flask.ext.restful import reqparse, Api, Resource
+from flask_restful import Api, reqparse, Resource
+
 from decoder import Decoder
 from languages import new_lang_from_long_english_name
 from text import PreProcessor, PostProcessor
@@ -12,7 +13,7 @@ app = Flask(__name__)
 api = Api(app)
 
 http_parser = reqparse.RequestParser()
-http_parser.add_argument('inputText', type=unicode, location='json')
+http_parser.add_argument('inputText', type=str, location='json')
 http_parser.add_argument('inputLanguage', type=str, location='json')
 
 decoders = {}
@@ -24,6 +25,7 @@ class TranslationEngine(Resource):
     translations from the relevant Joshua decoder, postprocessing and returning
     the results.
     """
+
     def post(self, target_lang_code):
         args = http_parser.parse_args()
 
@@ -102,8 +104,8 @@ def handle_cli_args(argv):
     # bundle
     num_bundles = len(parsed_args.bundle_dir)
     mismatched_num_of_ports = (
-        len(parsed_args.source_lang) != num_bundles or
-        len(parsed_args.target_lang) != num_bundles
+            len(parsed_args.source_lang) != num_bundles or
+            len(parsed_args.target_lang) != num_bundles
     )
     if mismatched_num_of_ports:
         sys.stderr.write(
@@ -132,6 +134,7 @@ def handle_cli_args(argv):
 
     return parsed_args
 
+
 api.add_resource(
     TranslationEngine,
     '/joshua/translate/<string:target_lang_code>'
@@ -148,4 +151,3 @@ if __name__ == '__main__':
         decoders[lang_pair] = decoder
 
     app.run(debug=True, use_reloader=False)
-    #app.run()

@@ -46,6 +46,6 @@ class Decoder(object):
         return rx_msg
 
     def start_decoder_server(self):
-        runner_path = os.path.join(self.bundle_dir, 'run-joshua.sh')
+        runner_path = os.path.join(self.bundle_dir, 'joshua')
         options = ['-server-port', str(self.port)]
         subprocess.Popen([runner_path] + options, env=os.environ)
